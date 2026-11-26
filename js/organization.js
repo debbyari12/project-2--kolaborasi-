@@ -1,22 +1,28 @@
 /**
  * Modul Notes Organization (Developer 2)
  * Bertanggung jawab atas pencarian, penyaringan (kategori, favorit), dan pengurutan catatan.
+ * Sesuai dengan spesifikasi PRD (FR-05, FR-06, FR-07, FR-08, FR-09).
  */
 
 /**
  * Mencari catatan berdasarkan judul atau isi catatan (case-insensitive).
+ * Mendukung pencarian aman saat field bernilai null/undefined atau array kosong.
  * @param {Array<Object>} notes
  * @param {string} query
  * @returns {Array<Object>}
  */
 export function searchNotes(notes, query) {
-  if (!query || !query.trim()) {
+  if (!Array.isArray(notes)) {
+    return [];
+  }
+  if (!query || typeof query !== 'string' || !query.trim()) {
     return notes;
   }
   const q = query.toLowerCase().trim();
   return notes.filter(note => {
-    const titleMatch = note.title && note.title.toLowerCase().includes(q);
-    const contentMatch = note.content && note.content.toLowerCase().includes(q);
+    if (!note) return false;
+    const titleMatch = typeof note.title === 'string' && note.title.toLowerCase().includes(q);
+    const contentMatch = typeof note.content === 'string' && note.content.toLowerCase().includes(q);
     return titleMatch || contentMatch;
   });
 }
@@ -28,10 +34,13 @@ export function searchNotes(notes, query) {
  * @returns {Array<Object>}
  */
 export function filterByCategory(notes, category) {
+  if (!Array.isArray(notes)) {
+    return [];
+  }
   if (!category || category === 'All' || category === 'all') {
     return notes;
   }
-  return notes.filter(note => note.category && note.category.toLowerCase() === category.toLowerCase());
+  return notes.filter(note => note && typeof note.category === 'string' && note.category.toLowerCase() === category.toLowerCase());
 }
 
 /**
@@ -41,10 +50,13 @@ export function filterByCategory(notes, category) {
  * @returns {Array<Object>}
  */
 export function filterFavorites(notes, enabled) {
+  if (!Array.isArray(notes)) {
+    return [];
+  }
   if (!enabled) {
     return notes;
   }
-  return notes.filter(note => Boolean(note.isFavorite));
+  return notes.filter(note => Boolean(note && note.isFavorite));
 }
 
 /**
@@ -63,21 +75,24 @@ export function filterFavorites(notes, enabled) {
  * @returns {Array<Object>}
  */
 export function sortNotes(notes, sortBy = 'newest') {
-  const list = [...notes];
+  if (!Array.isArray(notes)) {
+    return [];
+  }
+  const list = [...notes].filter(Boolean);
   const pinned = list.filter(n => Boolean(n.isPinned));
   const unpinned = list.filter(n => !n.isPinned);
 
   const compareFn = (a, b) => {
     switch (sortBy) {
       case 'oldest':
-        return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        return new Date(a.updatedAt || 0).getTime() - new Date(b.updatedAt || 0).getTime();
       case 'title-asc':
-        return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' });
+        return (a.title || '').localeCompare(b.title || '', undefined, { sensitivity: 'base' });
       case 'title-desc':
-        return b.title.localeCompare(a.title, undefined, { sensitivity: 'base' });
+        return (b.title || '').localeCompare(a.title || '', undefined, { sensitivity: 'base' });
       case 'newest':
       default:
-        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime();
     }
   };
 
