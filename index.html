@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes App - Aplikasi Catatan Pribadi</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/notes.css">
+  <link rel="stylesheet" href="css/organization.css">
+</head>
+<body>
+  <!-- Header Aplikasi -->
+  <header class="app-header">
+    <div class="container header-content">
+      <div class="app-branding">
+        <span class="app-logo">📝</span>
+        <h1 class="app-title">Notes App</h1>
+      </div>
+      <button id="btn-create-note" class="btn btn-primary" type="button">
+        <span>+</span> Catatan Baru
+      </button>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="app-main">
+    <div class="container">
+      
+      <!-- Toolbar Pencarian & Filter (Modul Organization) -->
+      <section class="org-toolbar" aria-label="Toolbar Pengorganisasian">
+        <!-- Input Pencarian -->
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="search" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Cari catatan berdasarkan judul atau isi..." 
+            autocomplete="off"
+          >
+        </div>
+
+        <!-- Filter Kategori, Favorit, dan Sorting -->
+        <div class="filters-wrapper">
+          <div class="category-filters" id="category-filters" role="group" aria-label="Filter Kategori">
+            <button type="button" class="filter-btn active" data-category="All">Semua</button>
+            <button type="button" class="filter-btn" data-category="Personal">Personal</button>
+            <button type="button" class="filter-btn" data-category="Work">Work</button>
+            <button type="button" class="filter-btn" data-category="Study">Study</button>
+            <button type="button" class="filter-btn" data-category="Other">Other</button>
+          </div>
+
+          <div class="secondary-filters">
+            <!-- Filter Favorit -->
+            <button type="button" id="btn-filter-favorite" class="btn-filter-fav" aria-pressed="false">
+              <span>⭐</span> Hanya Favorit
+            </button>
+
+            <!-- Sorting Dropdown -->
+            <div class="sort-select-wrapper">
+              <label for="sort-select" style="font-size: 0.85rem; color: var(--text-muted);">Urutkan:</label>
+              <select id="sort-select" class="sort-select">
+                <option value="newest">Terbaru Diperbarui</option>
+                <option value="oldest">Terlama Diperbarui</option>
+                <option value="title-asc">Judul (A - Z)</option>
+                <option value="title-desc">Judul (Z - A)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ringkasan & Kontainer Catatan -->
+      <section aria-label="Daftar Catatan">
+        <div class="section-header">
+          <h2 class="section-title">Semua Catatan</h2>
+          <span id="notes-count" class="notes-count">Memuat catatan...</span>
+        </div>
+
+        <!-- Grid Kartu Catatan -->
+        <div id="notes-grid" class="notes-grid">
+          <!-- Item catatan akan dirender secara dinamis di sini -->
+        </div>
+
+        <!-- State Kosong (Empty State) -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3 class="empty-state-title" id="empty-state-title">Belum Ada Catatan</h3>
+          <p class="empty-state-desc" id="empty-state-desc">
+            Mulai mencatat ide, pekerjaan, atau daftar kegiatan Anda dengan mudah sekarang.
+          </p>
+          <button id="btn-empty-create" class="btn btn-primary" type="button">
+            Buat Catatan Pertama
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal Form: Tambah / Edit Catatan -->
+  <div id="modal-note-form" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="form-modal-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="form-modal-title" class="modal-title">Tambah Catatan</h3>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Tutup">&times;</button>
+      </div>
+      <form id="note-form" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="note-id" value="">
+          
+          <!-- Input Judul -->
+          <div class="form-group">
+            <label for="note-title" class="form-label">Judul <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="note-title" 
+              class="form-input" 
+              placeholder="Contoh: Rencana Mingguan" 
+              maxlength="120"
+              required
+            >
+            <div id="error-title" class="error-message">Judul catatan wajib diisi.</div>
+          </div>
+
+          <!-- Pilihan Kategori -->
+          <div class="form-group">
+            <label for="note-category" class="form-label">Kategori <span class="required">*</span></label>
+            <select id="note-category" class="form-select" required>
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Study">Study</option>
+              <option value="Other">Other</option>
+            </select>
+            <div id="error-category" class="error-message">Kategori harus dipilih.</div>
+          </div>
+
+          <!-- Input Konten / Isi -->
+          <div class="form-group">
+            <label for="note-content" class="form-label">Isi Catatan <span class="required">*</span></label>
+            <textarea 
+              id="note-content" 
+              class="form-textarea" 
+              rows="6" 
+              placeholder="Tuliskan catatan Anda di sini..." 
+              required
+            ></textarea>
+            <div id="error-content" class="error-message">Isi catatan wajib diisi.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Batal</button>
+          <button type="submit" id="btn-save-note" class="btn btn-primary">Simpan Catatan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Detail Catatan -->
+  <div id="modal-note-detail" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="detail-title" class="modal-title">Detail Catatan</h3>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-meta">
+          <span id="detail-category" class="note-badge badge-personal">Personal</span>
+          <span id="detail-created">Dibuat: -</span>
+          <span id="detail-updated">Diperbarui: -</span>
+        </div>
+        <div id="detail-content" class="detail-content"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-detail-edit" class="btn btn-primary">Edit Catatan</button>
+        <button type="button" class="btn btn-secondary" data-close-modal>Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi Hapus Catatan -->
+  <div id="modal-delete-confirm" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-container" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 id="delete-modal-title" class="modal-title">Konfirmasi Hapus</h3>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: #475569; font-size: 0.95rem;">
+          Apakah Anda yakin ingin menghapus catatan "<strong id="delete-note-title"></strong>"? Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Batal</button>
+        <button type="button" id="btn-confirm-delete" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wadah Toast Notifikasi -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main JavaScript Modul -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

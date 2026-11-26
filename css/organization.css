@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Notes Organization CSS (Developer 2)
+   Styling untuk bilah pencarian, filter kategori, tombol favorit, & sorting.
+   ========================================================================== */
+
+.org-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 14px);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+}
+
+/* Bilah Pencarian */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.65rem 0.85rem 0.65rem 2.5rem;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: var(--radius-md, 10px);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  background-color: #ffffff;
+  border-color: var(--primary-color, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Bilah Filter dan Sorting */
+.filters-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.category-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-btn {
+  background-color: #f1f5f9;
+  border: 1px solid transparent;
+  color: #475569;
+  padding: 0.4rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.filter-btn.active {
+  background-color: var(--primary-color, #2563eb);
+  color: #ffffff;
+}
+
+.secondary-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.btn-filter-fav {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: #64748b;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md, 10px);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-filter-fav:hover {
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.btn-filter-fav.active {
+  background-color: #fef9c3;
+  border-color: #fde047;
+  color: #a16207;
+}
+
+.sort-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sort-select {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border-color, #cbd5e1);
+  border-radius: var(--radius-md, 10px);
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  border-color: var(--primary-color, #2563eb);
+}
+
+@media (max-width: 640px) {
+  .filters-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .secondary-filters {
+    margin-left: 0;
+    justify-content: space-between;
+  }
+}
